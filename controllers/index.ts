@@ -1,1 +1,1 @@
-export * as userController from './user'
+export * as usersController from './users'
