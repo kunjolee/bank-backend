@@ -24,7 +24,8 @@ const User = db.define('user', {
         type: DataTypes.DATE
     },
     state: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 1
     },
 })
 

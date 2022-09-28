@@ -65,7 +65,7 @@ export const update = async ( req: Request, res: Response ) => {
 
         if ( !user ) {
             return res.status(400).json({
-                msg: `There is no user with id "${ id }"`
+                msg: `There is no user with id ${ id }`
             })
         }
 

@@ -3,7 +3,7 @@ import cors from 'cors';
 
 import db from '../db/connection';
 import { usersRouter } from '../routes/';
-import { PORT } from '../conf/';
+import { APP_PORT } from '../conf/';
 
 class Server {
 
@@ -15,7 +15,7 @@ class Server {
 
     constructor(){
         this.app = express();
-        this.port = PORT;
+        this.port = APP_PORT;
         
         this.dbConnection();
         this.middlewares();   
