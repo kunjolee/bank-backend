@@ -1,9 +1,10 @@
-import { Request, Response } from 'express'
-import { User } from '../models'
+import { Request, Response } from 'express';
+import bcryptjs from 'bcryptjs'
+import { User } from '../models';
 
 export const get = async ( req: Request, res: Response ) => {
 
-    const users = await User.findAll();    
+const users = await User.findAll();    
         
     res.json({
         msg: 'GET',
@@ -27,23 +28,22 @@ export const getById = async ( req: Request, res: Response ) => {
 }
 
 export const save = async ( req: Request, res: Response ) => {
-    const { body } = req;
+    const { pass, ...rest } = req.body;
         
     try {
-        
-        const existEmail = await User.findOne({
-            where: {
-                email: body.email
-            }
-        })
 
-        if (existEmail) {
-            return res.status(400).json({msg: 'This email already exist'})
-        }
+        const salt = bcryptjs.genSaltSync();
+        const hash = bcryptjs.hashSync(pass, salt);
 
-        const user = await User.create(body)        
-        
-        res.status(200).json(user)
+        const user = await User.create({
+            ...rest,
+            pass: hash
+        });        
+
+        res.status(200).json({
+            msg: 'User saved successfully',
+            user
+        });
 
     } catch (error) {
         console.log('User POST ERROR',error)
@@ -110,9 +110,7 @@ export const deleteUser = async ( req: Request, res: Response) => {
         console.log('DELETE USERS ',error)
         res.status(500).json({
             msg: 'Contact your admin'
-        })
+        });
     }
-    
-
 
 }

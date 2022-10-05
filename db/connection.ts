@@ -16,6 +16,6 @@ const db = new Sequelize( URI, {
     // logging: 
 })
 
-db.sync();
+// db.sync();
 
 export default db;

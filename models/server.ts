@@ -2,7 +2,9 @@ import express, { Application } from 'express';
 import cors from 'cors';
 
 import db from '../db/connection';
-import { usersRouter } from '../routes/';
+
+import { balanceRouter, categoriesRouter, currencyRouter, usersRouter, authRouter } from '../routes/';
+
 import { APP_PORT } from '../conf/';
 
 class Server {
@@ -10,13 +12,17 @@ class Server {
     private app: Application;
     private port: string;
     private apiPaths = {
-        user: '/api/users'
+        user: '/api/users',
+        category: '/api/categories',
+        balance: '/api/balance',
+        currency: '/api/currency',
+        auth: '/api/auth',
     };
 
     constructor(){
         this.app = express();
         this.port = APP_PORT;
-        
+
         this.dbConnection();
         this.middlewares();   
         this.routes();
@@ -50,7 +56,11 @@ class Server {
     }
     
     routes(){        
-        this.app.use(this.apiPaths.user, usersRouter);        
+        this.app.use( this.apiPaths.user, usersRouter );        
+        this.app.use( this.apiPaths.category, categoriesRouter );        
+        this.app.use( this.apiPaths.balance, balanceRouter);
+        this.app.use( this.apiPaths.currency, currencyRouter);
+        this.app.use( this.apiPaths.auth, authRouter);
     }
     
 

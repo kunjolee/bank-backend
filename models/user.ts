@@ -1,29 +1,40 @@
 import { DataTypes } from 'sequelize';
 import db from '../db/connection';
+import { IUser } from '../interfaces';
 
-const User = db.define('user', {
+const User = db.define<IUser>('user', {
     name: {
+        allowNull: false,
         type: DataTypes.STRING
     },
     username: {
-        type: DataTypes.STRING
+        allowNull: false,
+        type: DataTypes.STRING,
+        unique: true,
     },
     email: {
-        type: DataTypes.STRING
+        allowNull: false,
+        type: DataTypes.STRING,
+        unique: true
     },
     pass: {
+        allowNull: false,
         type: DataTypes.STRING
     },
     address: {
+        allowNull: false,
         type: DataTypes.STRING
     },
     phone: {
+        allowNull: false,
         type: DataTypes.STRING
     },
     birthdate: {
-        type: DataTypes.DATE
+        allowNull: false,
+        type: DataTypes.DATEONLY,
     },
     state: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         defaultValue: 1
     },
