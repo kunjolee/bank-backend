@@ -1,2 +1,2 @@
 export * from './db-validations';
-export * from './jwt-generate';
+export * from './jwt';

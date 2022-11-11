@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcryptjs from 'bcryptjs'
 import { User } from '../models';
+import { generateJWT } from '../helpers';
 
 export const get = async ( req: Request, res: Response ) => {
 
@@ -40,9 +41,23 @@ export const save = async ( req: Request, res: Response ) => {
             pass: hash
         });        
 
+
+        const token = await generateJWT(user.id, user.username, user.email);
+
         res.status(200).json({
             msg: 'User saved successfully',
-            user
+            user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                phone: user.phone,
+                birthdate: user.birthdate,
+                state: user.state
+            },
+            ok: true,
+            token
         });
 
     } catch (error) {

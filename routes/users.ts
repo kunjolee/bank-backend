@@ -1,16 +1,14 @@
 import { Router } from 'express';
 import { body, check } from 'express-validator';
 
-
 import { usersController } from '../controllers';
 import { existUserById, existUserEmail } from '../helpers/db-validations';
 import { fieldsValidate } from '../middlewares';
+import { validateJWT } from '../middlewares/validate-jwt';
 
 const router = Router();
 
 router.get('/', usersController.get);
-
-
 
 router.get('/:id', [
     check('id').custom( existUserById )
@@ -19,7 +17,7 @@ router.get('/:id', [
 
 router.post(
     '/',
-    [
+    [  
         body('name', 'Name is required').notEmpty(),
         body('username', 'Username is required').notEmpty(),
         body('email', 'Invalid email').isEmail(),
@@ -38,9 +36,14 @@ router.post(
 
 
 router.put('/:id', [
-    
+    validateJWT,
+    fieldsValidate
 ], usersController.update);
-router.delete('/:id', [], usersController.deleteUser);
+
+router.delete('/:id', [
+    validateJWT,
+    fieldsValidate
+], usersController.deleteUser);
 
 
 

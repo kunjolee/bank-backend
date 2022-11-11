@@ -1,8 +1,7 @@
 import { Response } from 'express';
-import { Op } from 'sequelize';
 import bcryptjs from 'bcryptjs'
-import { generateJWT } from '../helpers';
-import { IAuth,CustomRequest, IUser } from '../interfaces';
+import { generateJWT, verifyJWT } from '../helpers';
+import { IAuth,CustomRequest } from '../interfaces';
 import { User } from '../models';
 
 export const login = async (req: CustomRequest<IAuth>, res: Response) => {
@@ -12,10 +11,7 @@ export const login = async (req: CustomRequest<IAuth>, res: Response) => {
 
         const user = await User.findOne({ 
             where: {
-                [Op.or]: [
-                    { email },
-                    { username }
-                ]          
+                username       
             },
          });
 
@@ -35,9 +31,18 @@ export const login = async (req: CustomRequest<IAuth>, res: Response) => {
       
         res.status(200).json({
             ok: true,
-            user,
             msg: 'authenticated successfully',
-            token
+            token,
+            user:{
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                phone: user.phone,
+                birthdate: user.birthdate,
+                state: user.state
+            }
         });
         
     } catch (error) {
@@ -48,3 +53,46 @@ export const login = async (req: CustomRequest<IAuth>, res: Response) => {
         })
     }
 }
+
+
+// verify if the user is already logged in
+export const verifyAuth = async (req: CustomRequest, res: Response) => {
+
+    const { token } = req.cookies as { token: string };
+    
+    try {
+        const uid = await verifyJWT( token );
+        
+        const user = await User.findByPk(uid);
+
+        if ( !user ) {
+            return res.status(400).json({ msg: 'No user with that ID' });
+        }
+
+
+        res.status(200).json({ 
+            ok: true,
+            msg: 'Authenticated successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                phone: user.phone,
+                birthdate: user.birthdate,
+                state: user.state
+            },
+            token
+        });
+
+    } catch (error) {
+        console.log('error in Auth:', error);
+
+        res.status(401).json({
+            msg: 'Session expired'
+        })
+    }
+}
+
+// migraciones mantienen el historial del schema de nuestra db

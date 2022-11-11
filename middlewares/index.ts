@@ -1,1 +1,2 @@
-export * from './validateFields'
+export * from './validate-fields'
+export * from './validate-jwt'

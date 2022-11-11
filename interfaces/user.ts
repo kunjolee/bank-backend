@@ -1,6 +1,5 @@
-import { Model } from "sequelize";
 
-export interface IUser extends Model{
+export interface IUser {
     id: string,
     name: string;
     username: string;
@@ -11,4 +10,3 @@ export interface IUser extends Model{
     birthdate: string;
     state: number;    
 }   
-

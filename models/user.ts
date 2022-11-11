@@ -1,8 +1,20 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
-import { IUser } from '../interfaces';
 
-const User = db.define<IUser>('user', {
+
+interface IUserModel extends Model{
+    id: string,
+    name: string;
+    username: string;
+    email: string;
+    pass: string;
+    address: string;
+    phone: string;
+    birthdate: string;
+    state: number;  
+}
+
+const User = db.define<IUserModel>('user', {
     name: {
         allowNull: false,
         type: DataTypes.STRING
