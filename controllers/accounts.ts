@@ -81,6 +81,7 @@ export const updateBalance = async (req: Request, res: Response) => {
             
             
         } catch (error) {
+            console.log(error)
             console.log('Error updating balance')    
     }
 }

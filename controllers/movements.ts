@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import db from '../db/connection';
 import { Movement } from '../models/'
 
 export const save = async (req: Request, res: Response) => {
@@ -24,4 +25,59 @@ export const save = async (req: Request, res: Response) => {
     }
 
 
+}
+
+
+export const getHistoryMovements = async (req: Request, res: Response) => {
+
+    const { idAccount = '', idCategory='', myDate = ''} = req.query
+
+    console.log('que recibes?????', myDate)
+    if (!idAccount) {
+        res.status(400).json({ msg: 'At least you should provide an idAccount' })
+    }
+
+    try {
+        
+        let query = ``;
+
+        query = `
+            select 
+            m.id, m.description, m."type", m.amount, m."myDate",
+            c.category
+            from movements m
+            
+            JOIN categories c ON m."idCategory" = c.id
+            where m."idAccount" = ${ idAccount }
+        `;
+        
+        if (idCategory) {
+            query = `
+                select 
+                m.id, m.description, m."type", m.amount, m."myDate",
+                c.category
+                from movements m
+                
+                JOIN categories c ON m."idCategory" = c.id
+                where m."idAccount" = ${ idAccount } and m."idCategory" = ${ idCategory }
+            `
+        } else if (myDate) {
+            query = `
+                select 
+                m.id, m.description, m."type", m.amount, m."myDate",
+                c.category
+                from movements m
+                
+                JOIN categories c ON m."idCategory" = c.id
+                where m."idAccount" = ${idAccount} and m."myDate"=${myDate}
+            `
+        }
+        
+        const [ results ] = await db.query(query);
+        res.status(200).json(results)
+        
+    } catch (error) {
+        // console.log(error)   
+        res.status(400).json({msg: 'Error happened at movements'})
+    }
 }
