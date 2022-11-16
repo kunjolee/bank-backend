@@ -19,4 +19,9 @@ router.put('/balance',[
     fieldsValidate
 ], accountController.updateBalance);
 
+router.put('/balance/:accountNumber',[
+    validateJWT,
+    fieldsValidate
+], accountController.updateBalanceByAccount);
+
 export default router;

@@ -28,11 +28,39 @@ export const save = async (req: Request, res: Response) => {
 }
 
 
+export const saveByAccount = async (req: Request, res: Response) => {
+    const { accountNumber } = req.params
+    try {
+        const { state, ...rest } = req.body;
+
+        const [ results ] = await db.query(`select id from accounts where "accountNumber" = '${ accountNumber }'`)
+
+        const movement = await Movement.create({
+            ...rest,
+            idAccount: (results[0] as any).id,
+            idUser: (req as any).authUser.id
+        });
+    
+        res.json({
+            msg: 'Movement saved successfully',
+            movement
+        })
+        
+    } catch (error) {
+        console.log('Movement POST ERROR',error)
+        res.status(500).json({
+            msg: 'Contact your admin',  
+            error          
+        })        
+    }
+
+
+}
+
 export const getHistoryMovements = async (req: Request, res: Response) => {
 
     const { idAccount = '', idCategory='', myDate = ''} = req.query
 
-    console.log('que recibes?????', myDate)
     if (!idAccount) {
         res.status(400).json({ msg: 'At least you should provide an idAccount' })
     }
@@ -77,7 +105,7 @@ export const getHistoryMovements = async (req: Request, res: Response) => {
         res.status(200).json(results)
         
     } catch (error) {
-        // console.log(error)   
         res.status(400).json({msg: 'Error happened at movements'})
     }
 }
+

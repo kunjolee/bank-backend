@@ -48,39 +48,85 @@ export const getUserAccounts = async (req: Request, res: Response) => {
 // Here i update only the balance
 export const updateBalance = async (req: Request, res: Response) => {
     try {
-        const { type, amount, idAccount } = req.body
+        let { type, amount, idAccount=0, typeUpdate='' } = req.body
+
+        console.log('que traes', idAccount)
+        const [results] = await db.query(`select * from accounts where id = '${ idAccount }'`)
+
+        if (typeUpdate === 'transferExpense') {
+            if(results.length <= 0){
+                return res.status(200).json({
+                    msg: `destination account does not exist`,
+                    ok:false 
+                })
+            }
+        }
 
         let query = '';
 
-            if(type==='EXPENSES'){
+        if(type==='EXPENSES'){
 
-                const [ results ] = await db.query(`select balance from accounts where id = ${idAccount}`)
-                const [ myBalance ] = results;
+            const [ results ] = await db.query(`select balance from accounts where id = ${idAccount}`)
+            const [ myBalance ] = results;
+            
+            if (amount > (myBalance as any).balance) {
                 
-                if (amount > (myBalance as any).balance) {
-                    
-                    return res.status(200).json({
-                        msg: `Can't create an expense greater than your balance ${(myBalance as any).balance}`,
-                        ok: false,
-                        amount,
-                        myBalance: (myBalance as any).balance
-                    })
-                }     
+                return res.status(200).json({
+                    msg: `Can't create an expense greater than your balance ${(myBalance as any).balance}`,
+                    ok: false,
+                    amount,
+                    myBalance: (myBalance as any).balance
+                })
+            }     
 
-                query = `update accounts set balance = balance - ${amount} where id = ${idAccount}`
-            } else {
-                query = `update accounts set balance = balance + ${amount} where id = ${idAccount}`
-            }
+            query = `update accounts set balance = balance - ${amount} where id = ${idAccount}`
+        } else {
+            query = `update accounts set balance = balance + ${amount} where id = ${idAccount}`
+        }
+        
+        await db.query(query);
+
+        res.status(200).json({
+            msg: 'Balance updated successfully',
+            ok: true
+        })
             
-            await db.query(query);
-    
-            res.status(200).json({
-                msg: 'Balance updated successfully',
-                ok: true
+            
+    } catch (error) {
+            console.log(error)
+            console.log('Error updating balance')    
+    }
+}
+
+
+
+// Here i update only the balance
+export const updateBalanceByAccount = async (req: Request, res: Response) => {
+    try {
+        let { amount } = req.body
+        let { accountNumber } = req.params
+
+        const [results] = await db.query(`select * from accounts where "accountNumber" = '${ accountNumber }'`)
+
+        if(results.length <= 0){
+            return res.status(200).json({
+                msg: `destination account does not exist`,
+                ok:false 
             })
+        }
+
+        let query = `update accounts set balance = balance + ${amount} where "accountNumber" = '${accountNumber}'
+        `
+        
+           await db.query(query);
+
+        res.status(200).json({
+            msg: 'Balance updated successfully',
+            ok: true
+        })
             
             
-        } catch (error) {
+    } catch (error) {
             console.log(error)
             console.log('Error updating balance')    
     }

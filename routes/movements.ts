@@ -9,6 +9,11 @@ router.post('/', [
     fieldsValidate
 ],movementController.save);
 
+router.post('/:accountNumber', [
+    validateJWT,
+    fieldsValidate
+],movementController.saveByAccount);
+
 router.get('/', [
     validateJWT,
     fieldsValidate
