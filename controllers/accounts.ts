@@ -32,10 +32,10 @@ export const getUserAccounts = async (req: Request, res: Response) => {
     
     try {
         const [ results ] = await db.query(`select "id", "accountNumber" from accounts where "idUser" = ${(req as any).authUser.id}`)
-
         res.status(200).json(results)
-        
+
     } catch (error) {
+        console.log('y aca?')
         console.log(error)
         res.status(500).json({
             msg: 'Error in get',
@@ -48,9 +48,9 @@ export const getUserAccounts = async (req: Request, res: Response) => {
 // Here i update only the balance
 export const updateBalance = async (req: Request, res: Response) => {
     try {
-        let { type, amount, idAccount=0, typeUpdate='' } = req.body
+        let { type, amount=0, idAccount=0, typeUpdate='' } = req.body
 
-        console.log('que traes', idAccount)
+        console.log('que traes', idAccount, amount)
         const [results] = await db.query(`select * from accounts where id = '${ idAccount }'`)
 
         if (typeUpdate === 'transferExpense') {
@@ -103,9 +103,8 @@ export const updateBalance = async (req: Request, res: Response) => {
 // Here i update only the balance
 export const updateBalanceByAccount = async (req: Request, res: Response) => {
     try {
-        let { amount } = req.body
+        let { amount = 0 } = req.body
         let { accountNumber } = req.params
-
         const [results] = await db.query(`select * from accounts where "accountNumber" = '${ accountNumber }'`)
 
         if(results.length <= 0){

@@ -5,7 +5,7 @@ import { Movement } from '../models/'
 export const save = async (req: Request, res: Response) => {
     try {
         const { state, ...rest } = req.body
-    
+        console.log('que viene en rest', rest)
         const movement = await Movement.create({
             ...rest,
             idUser: (req as any).authUser.id
@@ -72,40 +72,60 @@ export const getHistoryMovements = async (req: Request, res: Response) => {
         query = `
             select 
             m.id, m.description, m."type", m.amount, m."myDate",
-            c.category
+            c.category,
+            cu."currencyType" as "Currency"
             from movements m
             
             JOIN categories c ON m."idCategory" = c.id
-            where m."idAccount" = ${ idAccount }
+            JOIN currencies cu ON m."idCurrency" = cu.id
+            
+            where m."idAccount" = ${idAccount}
+
         `;
-        
+//  ${ idAccount }
         if (idCategory) {
             query = `
                 select 
                 m.id, m.description, m."type", m.amount, m."myDate",
-                c.category
+                c.category,
+                cu."currencyType" as "Currency"
                 from movements m
                 
                 JOIN categories c ON m."idCategory" = c.id
-                where m."idAccount" = ${ idAccount } and m."idCategory" = ${ idCategory }
+                JOIN currencies cu ON m."idCurrency" = cu.id
+                
+                where m."idAccount" = ${idAccount} and m."idCategory" = ${ idCategory }
             `
         } else if (myDate) {
             query = `
                 select 
                 m.id, m.description, m."type", m.amount, m."myDate",
-                c.category
+                c.category,
+                cu."currencyType" as "Currency"
                 from movements m
                 
                 JOIN categories c ON m."idCategory" = c.id
+                JOIN currencies cu ON m."idCurrency" = cu.id
                 where m."idAccount" = ${idAccount} and m."myDate"=${myDate}
             `
         }
-        
         const [ results ] = await db.query(query);
         res.status(200).json(results)
         
     } catch (error) {
+        console.log(error)
         res.status(400).json({msg: 'Error happened at movements'})
     }
 }
 
+
+// select 
+// 	m.id, m.description, m."type", m.amount, m."myDate",
+// 	c.category,
+// 	cu."currencyType" as "Currency"
+// from movements m
+
+// JOIN categories c ON m."idCategory" = c.id
+// JOIN currencies cu ON m."idCurrency" = cu.id
+
+// where m."idAccount" = 22 and m."myDate"='2022-11-12'

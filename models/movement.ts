@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-import { Category, Account} from './'
+import { Category, Account, Currency} from './'
 
 interface IMovement extends Model{
     id: string,
@@ -53,5 +53,12 @@ Account.hasMany(Movement, {
 })
 
 Movement.belongsTo(Account, { as: 'Account', foreignKey: 'idAccount' })
+
+Currency.hasMany(Movement,{
+    as: 'Currencies',
+    foreignKey: 'idCurrency'
+})
+
+Movement.belongsTo(Currency, {as: 'Currencie', foreignKey: 'idCurrency'})
 
 export default Movement;
