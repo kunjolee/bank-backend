@@ -35,7 +35,6 @@ export const getUserAccounts = async (req: Request, res: Response) => {
         res.status(200).json(results)
 
     } catch (error) {
-        console.log('y aca?')
         console.log(error)
         res.status(500).json({
             msg: 'Error in get',
@@ -129,4 +128,39 @@ export const updateBalanceByAccount = async (req: Request, res: Response) => {
             console.log(error)
             console.log('Error updating balance')    
     }
+}
+
+
+export const getTotalAccounts= async (req: Request, res: Response) => {
+    try {
+        const [ results ] = await db.query(
+            `SELECT SUM(balance) FROM accounts where "idUser" = ${(req as any).authUser.id}`
+        );
+
+    
+        res.status(200).json(results)
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'Error in get total',
+            error
+        })
+    }
+
+}
+export const getAccountInfoByUser= async (req: Request, res: Response) => {
+     
+    try {
+        const [ results ] = await db.query(`select "id", "accountNumber", "balance" from accounts where "idUser" = ${(req as any).authUser.id}`)
+        res.status(200).json(results)
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'Error in get info',
+            error
+        })
+    }
+
 }

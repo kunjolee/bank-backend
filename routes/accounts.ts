@@ -14,6 +14,16 @@ router.get('/',[
     fieldsValidate
 ], accountController.getUserAccounts);
 
+router.get('/total',[
+    validateJWT,
+    fieldsValidate
+], accountController.getTotalAccounts);
+
+router.get('/info',[
+    validateJWT,
+    fieldsValidate
+], accountController.getAccountInfoByUser);
+
 router.put('/balance',[
     validateJWT,
     fieldsValidate
