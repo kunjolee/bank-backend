@@ -5,7 +5,6 @@ import { Movement } from '../models/'
 export const save = async (req: Request, res: Response) => {
     try {
         const { state, ...rest } = req.body
-        console.log('que viene en rest', rest)
         const movement = await Movement.create({
             ...rest,
             idUser: (req as any).authUser.id

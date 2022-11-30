@@ -51,7 +51,10 @@ class Server {
 
         this.app.use(cookies());
         
-        this.app.use(cors({credentials: true, origin: 'http://localhost:5173'}));
+        this.app.use(cors({
+            credentials: true, origin: ['http://localhost:5173', 'http://localhost:4173']
+        }));
+        // this.app.use(cors());
 
         // read body in json format
         this.app.use( express.json() );

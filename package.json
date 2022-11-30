@@ -11,7 +11,8 @@
   },
   "scripts": {
     "dev": "nodemon dist/app.js",
-    "ts-dev": "npx tsc -w"
+    "ts-dev": "npx tsc -w",
+    "start": "node dist/app.js"
   },
   "name": "bank-app-backend",
   "version": "1.0.0",

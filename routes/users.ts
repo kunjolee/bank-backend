@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body, check } from 'express-validator';
 
 import { usersController } from '../controllers';
-import { existUserById, existUserEmail } from '../helpers/db-validations';
+import { existUserById, existUserEmail, existUserName } from '../helpers/db-validations';
 import { fieldsValidate } from '../middlewares';
 import { validateJWT } from '../middlewares/validate-jwt';
 
@@ -20,6 +20,7 @@ router.post(
     [  
         body('name', 'Name is required').notEmpty(),
         body('username', 'Username is required').notEmpty(),
+        body('username').custom( existUserName ),
         body('email', 'Invalid email').isEmail(),
         body('email').custom( existUserEmail ),
         body('pass', 'Password is required').notEmpty(),

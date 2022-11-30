@@ -11,6 +11,16 @@ export const existUserEmail = async ( email: string ) => {
     if (existEmail) return Promise.reject( `${ email } already exist` );
 }
 
+export const existUserName = async ( username: string) => {
+    const existUser = await User.findOne({
+        where: {
+            username
+        }
+    })
+
+    if (existUser) return Promise.reject(`${ username } already exist`)
+}
+
 export const existUserById = async ( id: string ) => {
 
     const existUser = await User.findByPk( id );
